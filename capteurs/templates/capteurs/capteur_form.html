@@ -1,0 +1,25 @@
+{% extends "capteurs/base.html" %}
+
+{% block contenu %}
+
+<h2>{{ titre }}</h2>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    {{ formulaire.as_p }}
+
+    <button type="submit">
+        Enregistrer
+    </button>
+
+</form>
+
+<p>
+    <a href="{% url 'capteurs:liste' %}">
+        Annuler
+    </a>
+</p>
+
+{% endblock %}
