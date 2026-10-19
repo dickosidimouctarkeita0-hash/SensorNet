@@ -16,8 +16,27 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import SimpleRouter
+
+from capteurs.views import CapteurViewSet
+
+# Création du Router
+router = SimpleRouter()
+
+# Enregistrement de notre endpoint
+router.register(
+    'capteurs',
+    CapteurViewSet,
+    basename='capteurs'
+)
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("capteurs/", include("capteurs.urls")),
+    # Administration Django
+    path('admin/', admin.site.urls),
+
+    # Pages HTML de SensorNet
+    path('capteurs/', include('capteurs.urls')),
+
+    # API REST en lecture seule
+    path('api/', include(router.urls)),
 ]

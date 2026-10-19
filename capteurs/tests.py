@@ -1,26 +1,45 @@
 from django.test import TestCase
 from django.urls import reverse
+from rest_framework.test import APITestCase
+from rest_framework import status
 
 from .models import Capteur
 
 
-class TestListeVide(TestCase):
+class CapteurAPITests(APITestCase):
 
-    def test_liste_vide(self):
+    def test_liste_capteurs(self):
+        url = reverse('capteurs-list')
+        response = self.client.get(url)
 
-        # Vérifier que la base de test est vide
-        self.assertEqual(Capteur.objects.count(), 0)
-
-        # Accéder à la liste des capteurs
-        reponse = self.client.get(
-            reverse("capteurs:liste")
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
         )
 
-        # Vérifier que la page fonctionne
-        self.assertEqual(reponse.status_code, 200)
+    def test_post_interdit(self):
+        url = reverse('capteurs-list')
+        response = self.client.post(url, {})
 
-        # Vérifier le message de la liste vide
-        self.assertContains(
-            reponse,
-            "Aucun capteur trouvé."
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    def test_put_interdit(self):
+        url = reverse('capteurs-detail', args=[1])
+        response = self.client.put(url, {})
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    def test_delete_interdit(self):
+        url = reverse('capteurs-detail', args=[1])
+        response = self.client.delete(url)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED
         )

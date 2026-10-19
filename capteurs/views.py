@@ -118,3 +118,40 @@ def capteur_supprimer(request, pk):
     return render(request, "capteurs/capteur_confsuppression.html", {
         "capteur": capteur
     })
+
+from rest_framework.viewsets import ReadOnlyModelViewSet
+
+from .models import Capteur
+from .serializers import CapteurSerializer
+
+
+class CapteurViewSet(ReadOnlyModelViewSet):
+
+    serializer_class = CapteurSerializer
+
+    def get_queryset(self):
+
+        queryset = Capteur.objects.all()
+
+        # Filtrer selon l'état actif ou inactif
+        actif = self.request.query_params.get('actif')
+
+        if actif is not None:
+            if actif.lower() == 'true':
+                queryset = queryset.filter(actif=True)
+            elif actif.lower() == 'false':
+                queryset = queryset.filter(actif=False)
+
+        # Filtrer selon le type de capteur
+        type_capteur = self.request.query_params.get('type_capteur')
+
+        if type_capteur:
+            queryset = queryset.filter(type_capteur=type_capteur)
+
+        # Rechercher un capteur par son nom
+        q = self.request.query_params.get('q')
+
+        if q:
+            queryset = queryset.filter(nom__icontains=q)
+
+        return queryset
