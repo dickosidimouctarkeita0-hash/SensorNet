@@ -1,7 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
+
+from rest_framework.viewsets import ModelViewSet
+
 from .models import Capteur
 from .forms import RechercheCapteurForm, CapteurForm
+from .serializers import CapteurSerializer
 
+
+# ==========================================================
+# PARTIE 1 : APPLICATION WEB DJANGO
+# ==========================================================
 
 # Afficher la liste et rechercher des capteurs
 def capteur_liste(request):
@@ -49,6 +57,7 @@ def capteur_detail(request, pk):
         "capteur": capteur
     })
 
+
 # Ajouter un nouveau capteur
 def capteur_ajouter(request):
 
@@ -70,6 +79,7 @@ def capteur_ajouter(request):
         "formulaire": formulaire,
         "titre": "Ajouter un capteur"
     })
+
 
 # Modifier un capteur existant
 def capteur_modifier(request, pk):
@@ -100,6 +110,7 @@ def capteur_modifier(request, pk):
         "titre": "Modifier le capteur"
     })
 
+
 # Supprimer un capteur
 def capteur_supprimer(request, pk):
 
@@ -119,16 +130,17 @@ def capteur_supprimer(request, pk):
         "capteur": capteur
     })
 
-from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from .models import Capteur
-from .serializers import CapteurSerializer
+# ==========================================================
+# PARTIE 2 : API REST SENSORNET - CRUD COMPLET
+# ==========================================================
 
+class CapteurViewSet(ModelViewSet):
 
-class CapteurViewSet(ReadOnlyModelViewSet):
-
+    # Serializer utilisé pour convertir les données en JSON
     serializer_class = CapteurSerializer
 
+    # Récupération et filtrage des capteurs
     def get_queryset(self):
 
         queryset = Capteur.objects.all()
